@@ -9,7 +9,16 @@
         (is (= (count (car-prices 0)) 0))
         )
       (testing "Provides cars where price is in the budget"
-        (is (= (count (car-prices 80000)) 2))
+        (let [prices (car-prices 80000)]
+          (is (= (count prices) 2))
+          (is (= prices '(["Fiat" 20000] ["BMW" 60000])))
+          )
+        )
+      (testing "Provides cars where price is in the budget after applying the coupon"
+        (let [prices (car-prices 50000 "SAVE20")]
+          (is (= (count prices) 2))
+          (is (= prices '(["Fiat" 16000.0] ["BMW" 48000.0])))
+          )
         )
       (testing "Provides all cars when budget is bigger than max car price"
         (is (= (count (car-prices 10000000)) 3))
