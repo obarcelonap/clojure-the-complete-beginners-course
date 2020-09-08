@@ -1,12 +1,15 @@
 (ns clojure-the-complete-beginners-course.bank)
 
-(def accounts (atom {}))
+(def accounts (ref {}))
 
 (defstruct account :name :amount)
 
 (defn clean-accounts
   []
-  (swap! accounts {}))
+  (dosync
+    (ref-set accounts {})
+    )
+  )
 
 (defn account-exists?
   [name]
@@ -19,17 +22,16 @@
 (defn change-account-amount
   [account amount]
   (def account-name (:name account))
-  (def new-account (assoc account :amount amount))
-  (swap! accounts assoc account-name new-account)
+  (assoc account :amount amount)
   )
 
 (defn create-account
   [name amount]
   (if (account-exists? name)
     "account-already-exists"
-    (do
+    (dosync
       (def new-account (struct account name amount))
-      (swap! accounts assoc name new-account)
+      (ref-set accounts (assoc @accounts name new-account))
       name
       )
     )
@@ -50,12 +52,14 @@
     (nil? src-account) "src-account-not-exists"
     (nil? dst-account) "dst-account-not-exists"
     (<= new-src-account-amount 0) "not-enough-money-in-src-account"
-    :else (
-            do (
-                (change-account-amount src-account new-src-account-amount)
-                (change-account-amount dst-account (+ (:amount dst-account) amount))
-                "transferred"
-                )
-               )
+    :else (do
+            (def new-src-account (change-account-amount src-account new-src-account-amount))
+            (def new-dst-account (change-account-amount dst-account (+ (:amount dst-account) amount)))
+            (dosync
+              (ref-set accounts (assoc @accounts src-account-name new-src-account))
+              (ref-set accounts (assoc @accounts dst-account-name new-dst-account))
+              )
+            "transferred"
+            )
     )
   )

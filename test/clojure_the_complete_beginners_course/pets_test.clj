@@ -1,6 +1,7 @@
 (ns clojure-the-complete-beginners-course.pets-test
   (:require [clojure.test :refer :all]
-            [clojure-the-complete-beginners-course.pets :refer :all]))
+            [clojure-the-complete-beginners-course.pets :refer :all])
+  )
 
 (deftest age-in-human-years-test
   (testing "Age in human years"

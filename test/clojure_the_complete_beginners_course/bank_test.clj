@@ -1,6 +1,6 @@
 (ns clojure-the-complete-beginners-course.bank-test
-  (:require [clojure.test :refer :all])
-  (:require [clojure-the-complete-beginners-course.bank :refer :all])
+  (:require [clojure.test :refer :all]
+            [clojure-the-complete-beginners-course.bank :refer :all])
   )
 
 (deftest bank-test
